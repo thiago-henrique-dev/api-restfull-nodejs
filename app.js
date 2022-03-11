@@ -1,10 +1,11 @@
 const express = require('express');
-const app = express()
+const app = express();
 
-app.use((req, res, next) => {
-    res.status(200).send({
-        message: "OK, deu certo"
-    })
-});
+const rotasProdutos = require('./routes/produtos');
+const rotasPedidos = require('./routes/pedidos')
+
+app.use('/produtos', rotasProdutos);
+app.use('/pedidos', rotasPedidos)
+
 
 module.exports = app;
