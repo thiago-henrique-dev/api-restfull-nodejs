@@ -19,7 +19,7 @@ router.get('/', (req, res, next) => {
                     conn.release()
                         if(error){return res.status(500).send({error:error})}
                             const response = {
-                                quantidade: result.length,
+                                
                                 pedidos: result.map(pedidos => {
                                     return {
                                         id_pedido: pedidos.id_pedidos,
