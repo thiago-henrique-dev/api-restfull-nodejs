@@ -6,7 +6,14 @@ const mysql = require('../mysql').pool;
 router.get('/', (req, res, next) => {
     mysql.getConnection((error, conn) => {
         if(error) {return res.status(500).send({error:error})}
-        conn.query(`SELECT * FROM pedidos;`,
+        conn.query(`SELECT pedidos.id_pedidos, 
+                        pedidos.quantidades, 
+                        produtos.id_produto, 
+                        produtos.nome, 
+                        produtos.preco from pedidos
+                        INNER JOIN produtos
+                        ON produtos.id_produto = pedidos.id_produto;
+;`,
             (error, result, fields) => {
                 if(error){ return res.status(500).send({eror:error})}
                     conn.release()
@@ -15,9 +22,13 @@ router.get('/', (req, res, next) => {
                                 quantidade: result.length,
                                 pedidos: result.map(pedidos => {
                                     return {
-                                        id_pedido: pedidos.id_pedido,
-                                        id_produto: pedidos.id_produto,
+                                        id_pedido: pedidos.id_pedidos,
                                         quantidade: pedidos.quantidade,
+                                        produto: {
+                                            id_produto: pedidos.id_produto,
+                                            nome: pedidos.nome,
+                                            preco: pedidos.preco
+                                        },
                                         request:{
                                             tipo: "GET",
                                             descricao: `Retorna todos os pedidos`
@@ -53,7 +64,7 @@ router.post('/', (req, res, next) => {
                                             const response = {
                                                 mensagem: 'Pedido inserido com sucesso',
                                                 produtoCriado: {
-                                                    id_pedido: result.id_pedidos,
+                                                    id_pedidos: req.params.id_pedidos,
                                                     id_produto: req.body.id_produto,
                                                     quantidade: req.body.quantidades,
                                                     request: {
