@@ -1,9 +1,7 @@
 const express = require('express');
 const router = express.Router()
-const mysql = require('../mysql').pool;
 const multer = require('multer')
 const login = require('../middleware/login')
-
 const ProdutosControllers = require('../controllers/produtos-controller');
 
 const storage = multer.diskStorage({
@@ -36,7 +34,8 @@ router.post(
     login.obrigatorio,
     upload.single('produto_imagem'),
     ProdutosControllers.postProduto
-);router.get('/:id_produto', ProdutosControllers.getUmProduto)
+)
+router.get('/:id_produto', ProdutosControllers.getUmProduto)
 router.patch('/', login.obrigatorio, ProdutosControllers.updateProdutos)
 router.delete('/', login.obrigatorio, ProdutosControllers.deleteProdutos)
 
