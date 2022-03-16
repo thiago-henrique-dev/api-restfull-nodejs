@@ -1,162 +1,116 @@
-const mysql = require('../mysql').pool;
+const mysql2 = require('../mysql');
+
+
 
 
 exports.getPedidos = async (req, res, next) => {
-       try {
-        
-            const query = `SELECT pedidos.id_pedidos, 
-            pedidos.quantidades, 
-            produtos.id_produto, 
-            produtos.nome, 
-            produtos.preco from pedidos
-            INNER JOIN produtos
-            ON produtos.id_produto = pedidos.id_produto;`
-            const result = await mysql.execute(query)
-    
-       } catch (error) {
-           
-       }
-}
-
-
-
-
-
-exports.getPedidos = (req, res, next) => {
-    mysql.getConnection((error, conn) => {
-        if(error) {return res.status(500).send({error:error})}
-        conn.query(`SELECT pedidos.id_pedidos, 
-                        pedidos.quantidades, 
-                        produtos.id_produto, 
-                        produtos.nome, 
-                        produtos.preco from pedidos
-                        INNER JOIN produtos
-                        ON produtos.id_produto = pedidos.id_produto;
-;`,
-            (error, result, fields) => {
-                if(error){ return res.status(500).send({eror:error})}
-                    conn.release()
-                        if(error){return res.status(500).send({error:error})}
-                            const response = {
-                                
-                                pedidos: result.map(pedidos => {
-                                    return {
-                                        id_pedido: pedidos.id_pedidos,
-                                        quantidade: pedidos.quantidade,
-                                        produto: {
-                                            id_produto: pedidos.id_produto,
-                                            nome: pedidos.nome,
-                                            preco: pedidos.preco
-                                        },
-                                        request:{
-                                            tipo: "GET",
-                                            descricao: `Retorna todos os pedidos`
-                                        }
-                                    }
-                                })
-                            }
-                            return res.status(200).send(response)
-            })
-    })
-}
-
-exports.postPedidos = (req, res, next) => {
-        mysql.getConnection((error, conn) => {
-            if (error) {return res.status(500).send({error: error})}
-            conn.query(
-                `SELECT * FROM produtos WHERE id_produto = ?`, [req.body.id_produto], // VERIFICO SE TEM PRODUTO
-                    (error, result, fields) => {
-                        if (error) {return res.status(500).send({error: error})}
-                        if(result.length == 0){
-                            return res.status(404).send({  // SE NAO TIVER PRODUTOS ELE RETORNA STATUS 404
-                                mensagem: `Produto nao encontrado`
-                            })
-                        } // CASO TENHA PRODUTOS ELE NAO ENTRA NO IF.. E VAI DAR CONTINUIDADE PARA INSERIR O PEDIDO 
-                        mysql.getConnection((error, conn) => {
-                            if (error) {return res.status(500).send({error: error})}
-                            conn.query('INSERT INTO pedidos (id_produto, quantidades) VALUES (?,?)',
-                                [req.body.id_produto, req.body.quantidades],
-                                    (error, result, field) => {
-                                        conn.release()
-                                            if(error) { return res.status(500).send({ error: error})}
-                                                const response = {
-                                                    mensagem: 'Pedido inserido com sucesso',
-                                                    produtoCriado: {
-                                                        id_pedidos: req.params.id_pedidos,
-                                                        id_produto: req.body.id_produto,
-                                                        quantidade: req.body.quantidades,
-                                                        request: {
-                                                            tipo: 'GET',
-                                                            descricao: 'Insere um pedido',
-                                                            url: 'http://localhost:3000/pedidos'
-                                                        }
-                                                    }
-                                                }
-                                                return res.status(201).send(response)
-                                    }
-                            
-                            )
-                        })
-                    });
-})
-}
-
-exports.getUmPedido = (req, res, next)=> {
-    mysql.getConnection((error, conn) => {
-        if (error) { return res.status(500).send({ error: error }) }
-        conn.query(
-            'SELECT * FROM pedidos WHERE id_pedidos = ?;',
-            [req.params.id_pedidos],
-            (error, result, fields) => {
-                if (error) { return res.status(500).send({ error: error }) }
-                if (result.length == 0) {
-                    return res.status(404).send({
-                        mensagem: 'Não foi encontrado pedido com este ID'
-                    })
-                }
-                const response = {
-                    pedido: {
-                        id_pedido: result[0].id_pedidos,
-                        id_produto: result[0].id_produto,
-                        quantidade: result[0].quantidade,
-                        request: {
-                            tipo: 'GET',
-                            descricao: 'Retorna todos os pedidos',
-                            url: 'http://localhost:3000/pedidos'
+    try {
+        const query = `SELECT pedidos.id_pedidos, 
+                                 pedidos.quantidades, 
+                                 produtos.id_produto, 
+                                 produtos.nome, 
+                                 produtos.preco from pedidos
+                                 INNER JOIN produtos
+                                 ON produtos.id_produto = pedidos.id_produto;
+         ;`
+        const result = await mysql2.execute(query)
+            const response = {
+                pedido: result.map(pedidos => {
+                    return {
+                        id_pedido: pedidos.id_pedidos,
+                        quantidade: pedidos.quantidades,
+                        produto: {
+                            id_produto: pedidos.id_produto,
+                            nome: pedidos.nome,
+                            preco: pedidos.preco
                         }
                     }
-                }
-                return res.status(200).send(response);
+                })
             }
-        )
-    });
-};
+            res.status(200).send(response)
+    } catch (error) {
+            res.status(500).send({error:error})
+    }
+}
 
-exports.deletarPedido = (req, res, next) => {
-    mysql.getConnection((error, conn) => {
-        if(error){return res.status(500).send({error: error})}
-            conn.query(
-                `DELETE FROM pedidos WHERE id_pedidos = ?`,
-                    [req.body.id_pedidos],
-                        (error, result, field) => {
-                            conn.release();
-                                if(error) {return res.status(500).send({error: error})}
-                                    const response = {
-                                        mensagem: `Pedido removido com sucesso`,
-                                        request:{
-                                            tipo: `DELETE`,
-                                            descricao: `Deletando um pedido`,
-                                            url: `http://localhost:3000/pedidos`,
-                                            body: {
-                                                id_produto: `Number`,
-                                                quantidade: `Number`
-                                            }
-                                        }
-                                    }
-                                    return res.status(202).send(response)
-                        }
-            )
-    })
+
+exports.postPedidos = async (req, res, next) => {
+    try {
+        const query = `SELECT * FROM produtos WHERE id_produto = ?`
+        const result = await mysql2.execute(query, [req.body.id_produto])
+
+        if(result.length == 0){
+            return res.status(404).send({ message: "Produto nao encontrado!!!!"})
+        }
+
+        const queryPedido = `INSERT INTO pedidos (id_pedidos, quantidades) VALUES (?,?)`;
+        const resultPedido = await mysql2.execute(queryPedido, [req.body.id_produto, req.body.quantidades])
+        const response = {
+            mensagem: 'Pedido inserido com sucesso',
+            produtoCriado: {
+                id_pedidos: req.params.id_pedidos,
+                id_produto: req.body.id_produto,
+                quantidade: req.body.quantidades,
+                request: {
+                    tipo: 'GET',
+                    descricao: 'Insere um pedido',
+                    url: 'http://localhost:3000/pedidos'
+                }
+            }
+        }
+        return res.status(201).send(response)
+    } catch (error) {
+        res.status(500).send({error:error})
+    }
+}
+
+exports.getUmPedido = async (req, res, next) => {
+    try {
+        const query = `SELECT * FROM pedidos WHERE id_pedidos = ?`
+        const result = await mysql2.execute(query, [req.params.id_pedidos])
+        console.log(result);
+        if(result.length == 0){
+            return res.status(404).send({ mensagem: "n achei"})
+        }   
+
+        const response = {
+            pedido: {
+                id_pedido: result[0].id_pedidos,
+                id_produto: result[0].id_produto,
+                quantidade: result[0].quantidades,
+                request: {
+                    tipo: 'GET',
+                    descricao: 'Retorna todos os pedidos',
+                    url: 'http://localhost:3000/pedidos'
+                }
+            }
+        }
+        return res.status(200).send(response);
+          } catch (error) {
+            return res.status(500).send({error:error})
+    }
+}
+
+exports.deletarPedido = async (req, res, next) => {
+    try {
+        const query = 'DELETE FROM pedidos WHERE id_pedidos = ?'
+        const result = await mysql2.execute(query, [req.body.id_pedidos])
+        const response = {
+            mensagem: `Pedido removido com sucesso`,
+            request:{
+                tipo: `DELETE`,
+                descricao: `Deletando um pedido`,
+                url: `http://localhost:3000/pedidos`,
+                body: {
+                    id_produto: `Number`,
+                    quantidade: `Number`
+                }
+            }
+        }
+        return res.status(202).send(response)
+    } catch (error) {
+        return res.status(500).send({error:error})
+    }
 }
 
 

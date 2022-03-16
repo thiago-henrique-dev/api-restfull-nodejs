@@ -115,7 +115,7 @@ exports.updateProdutos = async(req, res, next) => {
             }
             return res.status(202).send(response)
         } catch (error) {
-            returnres.status(500).send({error:error})
+            return res.status(500).send({error:error})
         }
             
             
