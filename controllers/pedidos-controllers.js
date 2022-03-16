@@ -1,5 +1,27 @@
 const mysql = require('../mysql').pool;
 
+
+exports.getPedidos = async (req, res, next) => {
+       try {
+        
+            const query = `SELECT pedidos.id_pedidos, 
+            pedidos.quantidades, 
+            produtos.id_produto, 
+            produtos.nome, 
+            produtos.preco from pedidos
+            INNER JOIN produtos
+            ON produtos.id_produto = pedidos.id_produto;`
+            const result = await mysql.execute(query)
+    
+       } catch (error) {
+           
+       }
+}
+
+
+
+
+
 exports.getPedidos = (req, res, next) => {
     mysql.getConnection((error, conn) => {
         if(error) {return res.status(500).send({error:error})}
@@ -136,3 +158,5 @@ exports.deletarPedido = (req, res, next) => {
             )
     })
 }
+
+

@@ -32,11 +32,18 @@ router.get('/', ProdutosControllers.getProdutos)
 router.post(
     '/',
     login.obrigatorio,
-    upload.single('image_produto'),
+    upload.single('imagem_produto'),
     ProdutosControllers.postProduto
 );
 router.get('/:id_produto', ProdutosControllers.getUmProduto)
 router.patch('/', login.obrigatorio, ProdutosControllers.updateProdutos)
 router.delete('/', login.obrigatorio, ProdutosControllers.deleteProdutos)
-
+router.post('/:id_produto/imagem',
+     login.obrigatorio,
+     upload.single('imagem_produto'),
+     ProdutosControllers.postImagem
+)
+router.get('/:id_produto/imagens',
+    ProdutosControllers.getImagens
+)
 module.exports = router;
