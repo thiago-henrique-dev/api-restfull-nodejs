@@ -32,9 +32,9 @@ router.get('/', ProdutosControllers.getProdutos)
 router.post(
     '/',
     login.obrigatorio,
-    upload.single('produto_imagem'),
+    upload.single('image_produto'),
     ProdutosControllers.postProduto
-)
+);
 router.get('/:id_produto', ProdutosControllers.getUmProduto)
 router.patch('/', login.obrigatorio, ProdutosControllers.updateProdutos)
 router.delete('/', login.obrigatorio, ProdutosControllers.deleteProdutos)

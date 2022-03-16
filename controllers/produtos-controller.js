@@ -1,3 +1,4 @@
+const { compareSync } = require('bcrypt');
 const mysql = require('../mysql');
 
 exports.getProdutos = async (req, res, next) => {
@@ -30,7 +31,7 @@ exports.getProdutos = async (req, res, next) => {
 
 exports.postProduto = async (req, res, next) => {
     try {
-        const query = 'INSERT INTO produtos (nome, preco, imagem_produto) VALUES (?,?,?)';
+        const query = 'INSERT INTO produtos (nome, preco, image_produto) VALUES (?,?,?)';
         const result = await mysql.execute(query, [
             req.body.nome,
             req.body.preco,
@@ -59,16 +60,20 @@ exports.postProduto = async (req, res, next) => {
 
 exports.getUmProduto = async (req, res, next) => {
    try {
+       console.log(req.params.id_produto);
        const query = `SELECT * FROM produtos WHERE id_produto =?`;
        const result = await mysql.execute(query, [
            req.params.id_produto
        ])
+        console.log(result)
+       
             if (result == 0){
                 return res.status(404).send({
                     mensagem: "Nao foi encontrado produto este ID"
                 })
             }
             const response = {
+                
                 produto: {
                     id_produto: result[0].id_produto,
                     nome: result[0].nome,
@@ -81,6 +86,7 @@ exports.getUmProduto = async (req, res, next) => {
                     }
                 }
             }
+                console.log(response)
                 res.status(200).send({response})
    } catch (error) {
             return res.status(500).send({ error: error })
@@ -114,31 +120,27 @@ exports.updateProdutos = async(req, res, next) => {
             
             
 };
-exports.deleteProdutos = (req, res, next) => {
+exports.deleteProdutos = async (req, res, next) => {
 
         try {
-            const query = `DELETE FROM produtos WHERE id_produto=?`;
-             mysql.execute(query, [req.body.id_produto]);
-                const response = {
-                    mensagem: "Produto deletado",
-                    request:{
-                        tipo: "POST",
-                        descricao: "Deletar um produto",
-                        url: process.env.URL.API + "produtos",
-                        body: {
-                            nome: "String",
-                            preco: "Number"
-                        }
+            const query = `DELETE FROM produtos WHERE id_produto = ?`;
+            await mysql.execute(query, [req.body.id_produto]);
+
+            const response = {
+                mensagem: 'Produto removido com sucesso',
+                request: {
+                    tipo: 'POST',
+                    descricao: 'Insere um produto',
+                    url: process.env.URL_API + 'produtos',
+                    body: {
+                        nome: 'String',
+                        preco: 'Number'
                     }
                 }
-               return  res.status(202).send(response)
-        } catch (error) {
+            }
+            return res.status(202).send(response);
+            } catch (error) {
             return res.status(500).send({error:error})
         }
-
-
-
-
-
 
 };
