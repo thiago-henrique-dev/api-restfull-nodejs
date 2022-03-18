@@ -31,19 +31,19 @@ const upload = multer({
 router.get('/', productController.getProducts)
 router.post(
     '/',
-    login.mandatory,
+    login.required,
     upload.single('productImage'),
     productController.productPost
 );
 router.get('/:productId', productController.getOneProduct)
-router.patch('/', login.mandatory, productController.updateProducts)
-router.delete('/', login.mandatory, productController.deleteProducts)
+router.patch('/', login.required, productController.updateProducts)
+router.delete('/', login.required, productController.deleteProducts)
 router.post('/:productId/image',
-     login.mandatory,
+     login.required,
      upload.single('productImage'),
      productController.postImagem
 )
-router.get('/:productId/imagens',
+router.get('/:productId/images',
     productController.getImagens
 )
 module.exports = router;

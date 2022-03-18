@@ -4,6 +4,6 @@ const login = require('../middleware/login');
 
 const imageController = require('../controllers/image-controllers')
 
-router.delete('/:imageId', login.mandatory, imageController.deleteImage)
+router.delete('/:imageId', login.required, imageController.deleteImage)
 
 module.exports = router

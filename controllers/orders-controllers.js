@@ -44,7 +44,7 @@ exports.postOrders = async (req, res, next) => {
         }
 
         const queryOrders = `INSERT INTO orders (orderId, quantity) VALUES (?,?)`;
-        const resultPedido = await mysql2.execute(queryOrders, [req.body.orderId, req.body.quantity])
+        const resultOrders = await mysql2.execute(queryOrders, [req.body.orderId, req.body.quantity])
         const response = {
             mensagem: 'Order entered successfully',
             produtoCriado: {

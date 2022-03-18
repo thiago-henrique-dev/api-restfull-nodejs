@@ -3,20 +3,18 @@ const mysql = require('../mysql');
 
 exports.getProducts = async (req, res, next) => {
     try {
-        const result = await mysql.execute("SELECT * FROM products;")
+        let name = ''
+        if(req.query.name){
+            name = req.query.name;
+        }
+        const query = `SELECT * FROM products WHERE categoryId = ? AND (name LIKE "%${name}%"  OR '${name}' = '' )`;
+        const result = await mysql.execute(query, [req.query.categoryId])
         const response = {
-            quantity: result.length,
-            products: result.map(prod => {
+            length: result.length,
+            categories: result.map(category => {
                 return {
-                    productId: prod.productId,
-                    name: prod.nome,
-                    price: prod.preco,
-                    productImage: prod.image_produto,
-                    request: {
-                        type: 'GET',
-                        description: 'Returns the specific details of a product',
-                        url: 'http://localhost:3000/products/' + prod.productId
-                    }
+                    categoryId: category.categoryId,
+                    name: category.name
                 }
             })
         }
@@ -31,11 +29,12 @@ exports.getProducts = async (req, res, next) => {
 
 exports.productPost = async (req, res, next) => {
     try {
-        const query = 'INSERT INTO products (name, price, productImage) VALUES (?,?,?)';
+        const query = 'INSERT INTO products (name, price, productImage, categoryId) VALUES (?,?,?,?)';
         const result = await mysql.execute(query, [
             req.body.name,
             req.body.price,
-            req.file.path
+            req.file.path,
+            req.body.categoryId
         ]);
 
         const response = {
@@ -45,6 +44,7 @@ exports.productPost = async (req, res, next) => {
                 name: req.body.name,
                 price: req.body.price,
                 productImage: req.file.path,
+                categoryId: req.body.categoryId,
                 request: {
                     type: 'GET',
                     description: 'Return specific products',
@@ -147,7 +147,7 @@ exports.deleteProducts = async (req, res, next) => {
 
 exports.postImagem = async (req, res, next) => {
     try {
-        const query = 'INSERT INTO productImage (id_produto, caminho) VALUES (?,?)';
+        const query = 'INSERT INTO productImages (productId, path) VALUES (?,?)';
         const result = await mysql.execute(query, [
             req.params.productImage,
             req.file.path

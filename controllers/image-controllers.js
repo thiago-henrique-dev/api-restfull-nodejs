@@ -2,7 +2,7 @@ const mysql = require('../mysql')
 
 exports.deleteImage = async (req, res, next) => {
     try {
-        const query = `DELETE FROM productImage WHERE imageId = ?`;
+        const query = `DELETE FROM productImages WHERE imageId = ?`;
         await mysql.execute(query, [req.params.imageId])
         console.log(req.params.imageId);
             

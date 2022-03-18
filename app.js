@@ -8,6 +8,7 @@ const routesProducts = require('./routes/products');
 const routesOrders = require('./routes/orders')
 const routesUsers = require('./routes/users')
 const routesImage = require('./routes/image')
+const routesCategories = require('./routes/category')
 
 app.use(morgan('dev'));
 app.use('/uploads', express.static(`uploads`))
@@ -30,7 +31,8 @@ app.use((req, res, next) => {
 app.use('/products', routesProducts);
 app.use('/orders', routesOrders)
 app.use('/users', routesUsers)
-app.use('/image', routesImage)
+app.use('/images', routesImage)
+app.use('/categories', routesCategories)
 
 // Quando nao encontra uma rota...
 app.use((req, res, next) => {
