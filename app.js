@@ -4,10 +4,10 @@ const morgan = require('morgan');
 const bodyParser = require('body-parser')
 
 
-const rotasProdutos = require('./routes/produtos');
-const rotasPedidos = require('./routes/pedidos')
-const rotasUsuarios = require('./routes/usuarios')
-const rotasImagens = require('./routes/imagens')
+const routesProducts = require('./routes/products');
+const routesOrders = require('./routes/orders')
+const routesUsers = require('./routes/users')
+const routesImage = require('./routes/image')
 
 app.use(morgan('dev'));
 app.use('/uploads', express.static(`uploads`))
@@ -27,10 +27,10 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use('/produtos', rotasProdutos);
-app.use('/pedidos', rotasPedidos)
-app.use('/usuarios', rotasUsuarios)
-app.use('/imagens', rotasImagens)
+app.use('/products', routesProducts);
+app.use('/orders', routesOrders)
+app.use('/users', routesUsers)
+app.use('/image', routesImage)
 
 // Quando nao encontra uma rota...
 app.use((req, res, next) => {

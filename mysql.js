@@ -10,8 +10,7 @@ var pool = mysql.createPool({
 
 exports.execute = (query, params=[]) => {
     return new Promise((resolve, reject) => {
-  
-                pool.query(query, params, (error, results, fields) => {
+        pool.query(query, params, (error, results, fields) => {
                     if(error) { 
                         reject(error)
                     } else {

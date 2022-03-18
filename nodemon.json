@@ -2,7 +2,7 @@
     "env":{
      "MYSQL_USER": "root",
      "MYSQL_PASSWORD": "password",
-     "MYSQL_DATABASE": "eccomerce",
+     "MYSQL_DATABASE": "Eccomerce",
      "MYSQL_HOST": "localhost",
      "MYSQL_PORT": 3306,
 
