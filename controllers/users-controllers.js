@@ -3,6 +3,21 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
+
+exports.getUsers = async (req,res, next) => {
+    try {
+        const query = `SELECT * FROM users`
+        const result = await mysql.execute(query)
+            const response = {
+                message: "Todos os usuarios"
+                
+            }   
+            res.status(200).send({response})
+    } catch (error) {
+            res.status(500).send({error:error})
+    }
+}
+
 exports.createUser = async (req, res, next) => {
     try {
         const query = `SELECT * FROM users WHERE email = ?`

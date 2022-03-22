@@ -42,3 +42,17 @@ exports.postCategories = async (req, res, next) => {
     }
 }
 
+exports.putCategories = async (req, res, next) => {
+    try {
+        const query = `UPDATE categories SET name = ?  WHERE categoryId = ? `
+        const result = await mysql.execute(query, [req.body.name, req.body.categoryId])
+            const response = {
+                message: 'Category edit sucessfull'
+            }
+                res.status(200).send(response)
+    }catch(error){
+            res.status(400).send({error:error})
+    }
+ 
+}
+

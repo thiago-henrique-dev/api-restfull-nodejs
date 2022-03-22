@@ -7,7 +7,7 @@ exports.getProducts = async (req, res, next) => {
         if(req.query.name){
             name = req.query.name;
         }
-        const query = `SELECT * FROM products WHERE categoryId = ? AND (name LIKE "%${name}%"  OR '${name}' = '' )`;
+        const query = `SELECT * FROM products`;
         const result = await mysql.execute(query, [req.query.categoryId])
         const response = {
             length: result.length,
@@ -28,12 +28,17 @@ exports.getProducts = async (req, res, next) => {
 
 
 exports.productPost = async (req, res, next) => {
+    // let data = req.body 
+    //     if(!data.name || !data.price || !data.categoryId) {
+    //         return res.status(400).send({ message: "some field is null"  })
+    //     }
+
     try {
         const query = 'INSERT INTO products (name, price, productImage, categoryId) VALUES (?,?,?,?)';
         const result = await mysql.execute(query, [
             req.body.name,
             req.body.price,
-            req.file.path,
+            req.body.path,
             req.body.categoryId
         ]);
 
@@ -69,7 +74,7 @@ exports.getOneProduct = async (req, res, next) => {
        
             if (result == 0){
                 return res.status(404).send({
-                    mensagem:  "No product found for this ID"
+                    mensagem:  "No product found for this ID!!!!"
                 })
             }
             const response = {
