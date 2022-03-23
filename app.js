@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const morgan = require('morgan');
 const bodyParser = require('body-parser')
+const cors = require('cors')
 
 
 const routesProducts = require('./routes/products');
@@ -40,6 +41,10 @@ app.use((req, res, next) => {
     erro.status = 404;
     next(erro)
 });
+app.use(cors({
+    allowedHeaders:'*',
+    origin:'*'
+  }))
 
 app.use((error, req, res, next) => {
     res.status(error.status || 500);

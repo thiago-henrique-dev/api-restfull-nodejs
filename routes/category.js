@@ -6,7 +6,9 @@ const categoriesContollers = require('../controllers/category-controllers');
 
 router.get('/', categoriesContollers.getCategories)
 router.post('/', categoriesContollers.postCategories)
-router.put('/', categoriesContollers.putCategories)
+router.put('/:categoryId', categoriesContollers.putCategories)
+router.delete('/:categoryId', categoriesContollers.deleteCategories)
+
 
 
 
