@@ -6,16 +6,8 @@ exports.getProducts = async (req, res, next) => {
        
         const query = `SELECT * FROM products`;
         const result = await mysql.execute(query)
-        const response = {
-            length: result.length,
-            categories: result.map(category => {
-                return {
-                    categoryId: category.categoryId,
-                    name: category.name
-                }
-            })
-        }
-        return res.status(200).send(response)
+     
+        return res.status(200).send(result)
 
 
     } catch (error) {
@@ -31,30 +23,15 @@ exports.productPost = async (req, res, next) => {
     //     }
 
     try {
-        const query = 'INSERT INTO products (name, price, productImage, categoryId) VALUES (?,?,?,?)';
+        const query = 'INSERT INTO products (name, price, categoryId) VALUES (?,?,?)';
         const result = await mysql.execute(query, [
             req.body.name,
             req.body.price,
-            req.body.path,
             req.body.categoryId
         ]);
 
-        const response = {
-            mensagem: 'product inserted successfully',
-            produtoCriado: {
-                productId: result.insertId,
-                name: req.body.name,
-                price: req.body.price,
-                productImage: req.file.path,
-                categoryId: req.body.categoryId,
-                request: {
-                    type: 'GET',
-                    description: 'Return specific products',
-                    url: process.env.URL_API + 'products'
-                }
-            }
-        }
-        return res.status(201).send(response);
+        
+        return res.status(201).send(result);
     } catch (error) {
         return res.status(500).send({ error: error });
     }
@@ -69,27 +46,13 @@ exports.getOneProduct = async (req, res, next) => {
        ])
         console.log(result)
        
-            if (result == 0){
-                return res.status(404).send({
-                    mensagem:  "No product found for this ID!!!!"
-                })
-            }
-            const response = {
-                
-                products: {
-                    productId: result[0].productId,
-                    name: result[0].name,
-                    price: result[0].price,
-                    productImage: result[0].productImage,
-                    request: {
-                        type: 'GET',
-                        description: 'Return all products',
-                        url: process.env.URL_API + `produtos`
-                    }
-                }
-            }
-                console.log(response)
-                res.status(200).send({response})
+            // if (result == 0){
+            //     return res.status(404).send({
+            //         mensagem:  "No product found for this ID!!!!"
+            //     })
+            // }
+         
+                res.status(200).send({result})
    } catch (error) {
             return res.status(500).send({ error: error })
    }
@@ -102,20 +65,9 @@ exports.updateProducts = async(req, res, next) => {
                 req.body.price,
                 req.body.productId
             ])
-            const response = {
-                mensagem: 'Product successfully updated',
-                produtoAtualizado: {
-                    productId: req.body.productId,
-                    name: req.body.name,
-                    price: req.body.price,
-                    request: {
-                        type: 'GET',
-                        description: 'Returns the details of a specific product',
-                        url: 'http://localhost:3000/produtos/' + req.body.productId
-                    }
-                }
-            }
-            return res.status(202).send(response)
+                   
+         
+            return res.status(202).send(result)
         } catch (error) {
             return res.status(500).send({error:error})
         }
@@ -128,18 +80,7 @@ exports.deleteProducts = async (req, res, next) => {
             const query = `DELETE FROM products WHERE productId = ?`;
             await mysql.execute(query, [req.body.productId]);
 
-            const response = {
-                message: 'Product removed successfully',
-                request: {
-                    type: 'POST',
-                    description: 'insert a product',
-                    url: process.env.URL_API + 'product',
-                    body: {
-                        nome: 'String',
-                        preco: 'Number'
-                    }
-                }
-            }
+            
             return res.status(202).send(response);
             } catch (error) {
             return res.status(500).send({error:error})

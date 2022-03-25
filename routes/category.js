@@ -8,6 +8,7 @@ router.get('/', categoriesContollers.getCategories)
 router.post('/', categoriesContollers.postCategories)
 router.put('/:categoryId', categoriesContollers.putCategories)
 router.delete('/:categoryId', categoriesContollers.deleteCategories)
+router.get('/:categoryId', categoriesContollers.getOneCategories)
 
 
 
