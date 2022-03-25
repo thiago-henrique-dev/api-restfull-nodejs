@@ -17,10 +17,8 @@ exports.getProducts = async (req, res, next) => {
 
 
 exports.productPost = async (req, res, next) => {
-    // let data = req.body 
-    //     if(!data.name || !data.price || !data.categoryId) {
-    //         return res.status(400).send({ message: "some field is null"  })
-    //     }
+
+    console.log(`req: `,req.body.name)
 
     try {
         const query = 'INSERT INTO products (name, price, categoryId) VALUES (?,?,?)';
@@ -63,11 +61,11 @@ exports.updateProducts = async(req, res, next) => {
             const result = await mysql.execute(query, [
                 req.body.name, 
                 req.body.price,
-                req.body.productId
+                req.params.productId
             ])
                    
          
-            return res.status(202).send(result)
+            return res.status(200).send(result)
         } catch (error) {
             return res.status(500).send({error:error})
         }
@@ -78,10 +76,10 @@ exports.deleteProducts = async (req, res, next) => {
 
         try {
             const query = `DELETE FROM products WHERE productId = ?`;
-            await mysql.execute(query, [req.body.productId]);
+             const result = await mysql.execute(query, [req.params.productId]);
 
             
-            return res.status(202).send(response);
+            return res.status(200).send(result);
             } catch (error) {
             return res.status(500).send({error:error})
         }

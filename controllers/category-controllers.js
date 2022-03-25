@@ -58,10 +58,8 @@ exports.deleteCategories = async (req, res, next) => {
     try {
         const query = `DELETE FROM categories WHERE categoryId = ?`
         const result = await mysql.execute(query, [req.params.categoryId])
-            const response = {
-                message: "Categorie delete sucessfulll"
-            }
-            res.status(200).send(response)
+          
+            res.status(200).send({ deleted: req.params.categoryId})
     } catch (error) {
             res.status(500).send({error:error})
     }

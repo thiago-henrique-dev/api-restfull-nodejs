@@ -37,8 +37,8 @@ router.post(
 );
 router.get('/:productId', productController.getOneProduct)
 router.put('/:productId', productController.updateProducts)
-router.delete('/',  productController.deleteProducts)
-router.post('/:productId/image',
+router.delete('/:productId',  productController.deleteProducts)
+router.post('/',
    
      upload.single('productImage'),
      productController.postImagem

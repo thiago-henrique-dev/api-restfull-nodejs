@@ -37,14 +37,14 @@ exports.getOrders = async (req, res, next) => {
 exports.postOrders = async (req, res, next) => {
     try {
         const query = `SELECT * FROM products WHERE productId = ?`
-        const result = await mysql2.execute(query, [req.body.productId])
+        const result = await mysql2.execute(query, [req.params.productId])
 
         if(result.length == 0){
             return res.status(404).send({ message: "Produto nao encontrado!!!!"})
         }
 
         const queryOrders = `INSERT INTO orders (orderId, quantity) VALUES (?,?)`;
-        const resultOrders = await mysql2.execute(queryOrders, [req.body.orderId, req.body.quantity])
+        const resultOrders = await mysql2.execute(queryOrders, [req.params.orderId, req.body.quantity])
         const response = {
             mensagem: 'Order entered successfully',
             produtoCriado: {
@@ -94,7 +94,7 @@ exports.getOrderDetail = async (req, res, next) => {
 exports.deleteOrder = async (req, res, next) => {
     try {
         const query = 'DELETE FROM orders WHERE orderId = ?'
-        const result = await mysql2.execute(query, [req.body.orderId])
+        const result = await mysql2.execute(query, [req.params.orderId])
         const response = {
             mensagem: `order removed successfully`,
             request:{
