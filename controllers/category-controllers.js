@@ -10,11 +10,12 @@ exports.getCategories = async (req, res, next) => {
             categories: result.map(category => {
                 return {
                     categoryId: category.categoryId,
-                    name: category.name
+                    name: category.name,
+                    categoryImage: category.categoryImage
                 }
             })
         }
-                res.status(200).send(response)
+        res.status(200).send(response)
     } catch (error) {
         res.status(200).send({error:error})
     }
@@ -31,9 +32,10 @@ exports.getOneCategories = async (req, res, next) => {
 }
 
 exports.postCategories = async (req, res, next) => {
+    console.log("req", req.body.categoryImage)
     try {
-        const query = `INSERT INTO categories (name) VALUES (?)`
-        const result = await mysql.execute(query, [req.body.name])
+        const query = `INSERT INTO categories (name, categoryImage) VALUES (?,?)`
+        const result = await mysql.execute(query, [req.body.name, req.body.categoryImage])
      
                 
                 return res.status(200).send(result)
@@ -42,10 +44,12 @@ exports.postCategories = async (req, res, next) => {
     }
 }
 
-exports.putCategories = async (req, res, next) => {
+exports.putCategories = async (req, res, next) => { 
+    console.log("req", req.body.categoryImage)
+
     try {
-        const query = `UPDATE categories SET name = ? WHERE categoryId = ? `
-        const result = await mysql.execute(query, [req.body.name, req.params.categoryId])
+        const query = `UPDATE categories SET name = ?, categoryImage = ? WHERE categoryId = ? `
+        const result = await mysql.execute(query, [req.body.name, req.body.categoryImage, req.params.categoryId])
         
                 res.status(200).send(result)
     }catch(error){

@@ -40,7 +40,7 @@ router.put('/:productId', productController.updateProducts)
 router.delete('/:productId',  productController.deleteProducts)
 router.post('/',
    
-     upload.single('productImage'),
+    
      productController.postImagem
 )
 router.get('/:productId/images',

@@ -18,18 +18,19 @@ exports.getProducts = async (req, res, next) => {
 
 exports.productPost = async (req, res, next) => {
 
-    console.log(`req: `,req.body.name)
+    console.log(`req: `,req.body.price)
 
     try {
-        const query = 'INSERT INTO products (name, price, categoryId) VALUES (?,?,?)';
+        const query = 'INSERT INTO products (name, price, categoryId, productImage) VALUES (?,?,?,?)';
         const result = await mysql.execute(query, [
             req.body.name,
             req.body.price,
-            req.body.categoryId
+            req.body.categoryId,
+            req.body.productImage,
         ]);
 
         
-        return res.status(201).send(result);
+        return res.status(200).send(result);
     } catch (error) {
         return res.status(500).send({ error: error });
     }

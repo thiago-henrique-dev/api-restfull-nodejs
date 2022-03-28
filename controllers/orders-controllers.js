@@ -4,11 +4,13 @@ const mysql2 = require('../mysql');
 
 
 exports.getOrders = async (req, res, next) => {
+    console.log("req", req.body.productImage)
     try {
         const query = `SELECT orders.orderId, 
                                  orders.quantity, 
                                  products.productId, 
                                  products.name, 
+                                 products.productImage,
                                  products.price from orders
                                  INNER JOIN products
                                  ON products.productId = orders.productId;
@@ -22,6 +24,7 @@ exports.getOrders = async (req, res, next) => {
                         product: {
                             productId: orders.productId,
                             name: orders.name,
+                            productImage: orders.productImage,
                             price: orders.price
                         }
                     }
@@ -35,35 +38,38 @@ exports.getOrders = async (req, res, next) => {
 
 
 exports.postOrders = async (req, res, next) => {
-    try {
-        const query = `SELECT * FROM products WHERE productId = ?`
-        const result = await mysql2.execute(query, [req.params.productId])
 
-        if(result.length == 0){
-            return res.status(404).send({ message: "Produto nao encontrado!!!!"})
+
+    try {
+        const queryProduct = 'SELECT * FROM products WHERE productId = ?';
+        const resultProduct = await mysql2.execute(queryProduct, [req.body.productId]);
+
+        if (resultProduct.length == 0) {
+            return res.status(404).send({ message: 'Produto não encontrado'});
         }
 
-        const queryOrders = `INSERT INTO orders (orderId, quantity) VALUES (?,?)`;
-        const resultOrders = await mysql2.execute(queryOrders, [req.params.orderId, req.body.quantity])
+        const queryOrder  = 'INSERT INTO orders (productId, quantity) VALUES (?,?)';
+        const resultOrder = await mysql2.execute(queryOrder, [req.body.productId, req.body.quantity]);
+
         const response = {
-            mensagem: 'Order entered successfully',
-            produtoCriado: {
-                orderId: req.params.orderId,
+            message: 'Pedido inserido com sucesso',
+            createdOrder: {
+                orderId: resultOrder.insertId,
                 productId: req.body.productId,
                 quantity: req.body.quantity,
                 request: {
-                    tipo: 'GET',
-                    descricao: 'Insert a product',
-                    url: 'http://localhost:3000/orders'
+                    type: 'GET',
+                    description: 'Retorna todos os pedidos',
+                    url: process.env.URL_API + 'orders'
                 }
             }
         }
-        return res.status(201).send(response)
-    } catch (error) {
-        res.status(500).send({error:error})
-    }
-}
+        return res.status(201).send(response);
 
+    } catch (error) {
+        return res.status(500).send({ error: error });
+    }
+};
 exports.getOrderDetail = async (req, res, next) => {
     try {
         const query = `SELECT * FROM orders WHERE orderId = ?`
