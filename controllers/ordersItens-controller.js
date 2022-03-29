@@ -1,4 +1,5 @@
 const {query} = require("express")
+const { restart } = require("nodemon")
 const mysql = require(`../mysql`)
 
 
@@ -60,7 +61,7 @@ exports.postOrdersItens = async (req, res, next) => {
         const response = {
             message: 'Pedido inserido com sucesso',
             createdOrder: {
-                orderItem: req.body.orderId_item,
+                orderItem: req.params.orderId_item,
                 orderId: resultOrder.insertId,
                 productId: req.body.productId,
                 quantity: req.body.productQt,
@@ -106,6 +107,24 @@ exports.getOneOrderItens = async (req, res, next) => {
             res.status(200).send(response)
     } catch (error) {
             res.status(500).send({error:error})
+    }
+}
+
+exports.updateOrdersItem = async (req, res, next) => {
+    try {
+        const query = `UPDATE orderItem SET productQt = ? WHERE productId =?`
+        const result = await mysql.execute(query, [req.body.productQt, req.params.productId])
+            const response = {
+                message: 'Product edit sucessfull ',
+                product: {
+                    productId: req.params.productId,
+                    productQd: req.body.productQt
+                }
+             
+            }
+            return res.status(200).send(response)
+    } catch (error) {
+            return res.status(500).send({error:error})
     }
 }
 

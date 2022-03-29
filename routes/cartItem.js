@@ -6,5 +6,6 @@ router.get('/', ordersItemControllers.getOrdersItens)
 router.post('/', ordersItemControllers.postOrdersItens)
 router.get('/:orderId_item', ordersItemControllers.getOneOrderItens)
 router.delete('/:orderId_item', ordersItemControllers.deleteOrdersItem)
+router.put('/:productId', ordersItemControllers.updateOrdersItem)
 
 module.exports = router
